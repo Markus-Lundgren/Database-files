@@ -149,7 +149,7 @@ order by Returns desc;
 -- | Erik Holm     |         26 |
 -- | Liam Holm     |         26 |
 -- +---------------+------------+
-select count(co.CustomerId) orderCount, c.FName from Customer c
+select concat(c.FName, ' ', c.LName) as Customer, count(co.CustomerId) orderCount from Customer c
 join COrder co on co.CustomerId = c.Id
 group by c.Id
 order by orderCount desc;
@@ -228,15 +228,14 @@ limit 10;
 -- | Maja Holm      | maja.holm4817@example.se      |   49885.00 |
 -- | Liam Lindqvist | liam.lindqvist9528@example.se |   49775.00 |
 -- +----------------+-------------------------------+------------+
-select sum(prO.UnitPrice * prO.Quantity) sold,
-       c.FName,
-       c.LName,
-       c.Email
+select concat(c.FName, ' ', c.LName) as Customer,
+       c.Email as Email,
+       sum(prO.UnitPrice * prO.Quantity) as TotalSpent
 from Customer c
 join COrder co on c.Id = co.CustomerId
 join ProductToOrder prO on co.Id = prO.OrderId
 group by c.Id
-order by sold desc
+order by TotalSpent desc
 limit 10;
 
 -- ============================================
@@ -499,7 +498,7 @@ select * from ProductCategory;
 -- +------+-------+--------+
 select year(co.CreatedDate) as År,
        month(co.CreatedDate) as Månad,
-       count(distinct co.Id)
+       count(co.Id)
 from COrder co
 group by År, Månad;
 -- Resultat returer per månad (första 5 av 56 rader):
@@ -514,7 +513,7 @@ group by År, Månad;
 -- +------+-------+---------+
 select year(r.IncomeDate) as År,
        month(r.IncomeDate) as Månad,
-       count(distinct r.Id)
+       count(r.Id)
 from `Return` r
 group by År, Månad;
 
