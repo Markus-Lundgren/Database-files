@@ -85,13 +85,24 @@ order by lagersaldo desc;
 --    (Summera antal sålda enheter per produktnamn)
 --    Drag slutsatser, vad spelar detta för roll för affären? (Rabatter, kampanjer?)
 -- ============================================
-
-
+select sum(prTO.Quantity) sold, p.Name from ProductToOrder prTO
+join Variant v on prTO.VariantId = v.Id
+join Product p on v.ProductId = p.Id
+group by p.Name
+order by sold desc
+limit 10;
 -- ============================================
 -- 10) Top 10 kunder som butiken tjänar mest pengar på
 --    (Summera alla deras ordervärden)
 -- Vi vill ha ders namn och email. De ska få bonuskoder!
 -- ============================================
+select sum(prO.UnitPrice) sold, c.FName, c.LName, c.Email
+from Customer c
+join COrder co on c.Id = co.CustomerId
+join ProductToOrder prO on co.Id = prO.OrderId
+group by c.Id
+order by sold desc
+limit 10;
 
 
 -- ============================================
