@@ -79,7 +79,6 @@ join Product p on v.ProductId = p.Id
 join ProductCategory pc on p.CategoryId = pc.Id
 group by pc.Name
 order by lagersaldo desc;
-
 -- ============================================
 -- 9) Räkna ut de 10 bäst säljande produkterna.
 --    (Summera antal sålda enheter per produktnamn)
@@ -103,14 +102,18 @@ join ProductToOrder prO on co.Id = prO.OrderId
 group by c.Id
 order by sold desc
 limit 10;
-
-
 -- ============================================
 -- 11) Hitta de 5 mest returnerade produkterna.
 --    (Summera antal returnerade enheter per produktnamn)
 -- ============================================
-
-
+select sum(r.QuantityReturned) TotalReturned, p.Name
+from `Return` r
+join ProductToOrder PtoO on r.PToOId = PtoO.Id
+join Variant v on PtoO.VariantId = v.Id
+join Product p on v.ProductId = p.Id
+group by p.Name
+order by TotalReturned desc
+limit 5;
 -- ============================================
 -- 12) Räkna ut hur stor ANDEL av de sålda enheterna som returneras, per kategori.
 --    (Summera sålda enheter och returnerade enheter per kategori, räkna sedan ut procenten)
@@ -119,7 +122,14 @@ limit 10;
 -- Vilka kategorier sticker ut? Vad kan det bero på?
 -- Vad skulle affären kunna göra åt de kategorier som sticker ut?
 -- ============================================
-
+select sum(r.QuantityReturned)/sum(PtoO.Quantity) * 100 returnPercent, pc.Name
+from ProductToOrder PtoO
+left join `Return` r on r.PToOId = PtoO.Id
+join Variant v on PtoO.VariantId = v.Id
+join Product p on v.ProductId = p.Id
+join ProductCategory pc on p.CategoryId = pc.Id
+group by pc.Name
+order by returnPercent desc;
 
 -- ============================================
 -- 13) Varianter som aldrig har sålts.
