@@ -38,7 +38,7 @@ join Product p on v.ProductId = p.Id;
 --    Drag slutsatser: ska affären köpa in lika många av varje storlek?
 --    Svar: Nej
 -- ============================================
-select count(v.Name)  from ProductToOrder prTO
+select count(v.Name) from ProductToOrder prTO
 join Variant v on prTO.VariantId = v.Id
 where v.Name like '46 -%'; -- 13806 M, 3953 XS, 8770 S, 12714 L, 7846 XL, 4118 XXL, 110 36, 2327 41, 122 46
 
@@ -74,7 +74,11 @@ order by orderCount desc;
 -- Hur många månader räcker lagret? Vilken kategori sticker ut? Varför är
 -- det ett problem just nu i slutet av augusti? Vad borde affären göra?
 -- ============================================
-select sum(v.Stock)
+select sum(v.Stock) lagersaldo, pc.Name from Variant v
+join Product p on v.ProductId = p.Id
+join ProductCategory pc on p.CategoryId = pc.Id
+group by pc.Name
+order by lagersaldo desc;
 
 -- ============================================
 -- 9) Räkna ut de 10 bäst säljande produkterna.
